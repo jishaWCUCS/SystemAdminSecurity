@@ -10,5 +10,5 @@ while [ ! -f /var/nfs/keys/id_rsa ]; do
 done
 
 cp /var/nfs/keys/id_rsa* /users/Jisha/.ssh/
-chown lngo: /users/Jisha/.ssh/id_rsa*
-runuser -u lngo -- cat /users/Jisha/.ssh/id_rsa.pub >> /users/Jisha/.ssh/authorized_keys
+chown Jisha: /users/Jisha/.ssh/id_rsa*
+runuser -u Jisha -- cat /users/Jisha/.ssh/id_rsa.pub >> /users/Jisha/.ssh/authorized_keys
