@@ -8,17 +8,15 @@ prefixForIP = "192.168.1."
 link = request.LAN("lan")
 
 # Create a XenVM
-for i in range(3):
-    if i == 0:
-        node = request.XenVM("webserver")
-        node.routable_control_ip = "true"
-        node.addService(rspec.Execute(shell="sh", command="sudo apt-get update && sudo apt-get install -y apache2"))
-    elif i == 1:
-        node = request.XenVM("observer")
-        node.routable_control_ip = "false"
-        node.addService(rspec.Execute(shell="sh", command="sudo apt-get update && sudo apt-get install -y nfs-kernel-server"))
+for i, node_name in enumerate(["webserver", "observer"]):
+    node = request.XenVM(node_name)
+    
+    if node_name == "webserver":
+        node.routable_control_ip = True
+        node.addService(rspec.Execute(shell="sh", command="sudo bash /local/repository/setup_apache.sh"))
     else:
-        node = request.XenVM("ldap")
+        node.routable_control_ip = False
+        node.addService(rspec.Execute(shell="sh", command="sudo apt-get update && sudo apt-get install -y nfs-kernel-server"))
 
     node.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU20-64-STD"
     iface = node.addInterface("if" + str(i))
