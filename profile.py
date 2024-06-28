@@ -1,34 +1,30 @@
-"""CloudLab Profile for constructing a profile with 2 nodes.
-Assignment 2 profile
+"""A profile to create a CloudLab infrastructure with two compute nodes: webserver and observer.
 
-Instructions:
-Wait for the profile instance to start, and then log in to the host via the
-ssh port specified below.
+The webserver node runs an Apache web server with a public IP address.
+The observer node runs an NFS server without a public IP address.
+Both nodes are connected to the same network.
 """
 
-# Import the necessary libraries
 import geni.portal as portal
-import geni.rspec.pg as pg
+import geni.rspec.pg as rspec
 
-# Create a request object to start building the RSpec
+# Create a request object to start building the RSpec.
 request = portal.context.makeRequestRSpec()
 
 # Define the webserver node
-webserver = request.RawPC("webserver")
-webserver.hardware_type = "m510"
-webserver.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU22-64-STD"
-webserver.addService(pg.Execute(shell="sh", command="sudo apt-get update && sudo apt-get install -y apache2"))
-webserver.routable_control_ip = True
+webserver = request.RawPC('webserver')
+webserver.hardware_type = 'c220g5'
+webserver.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
+webserver.Site('Site 1')
 
 # Define the observer node
-observer = request.RawPC("observer")
-observer.hardware_type = "m510"
-observer.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU22-64-STD"
-observer.addService(pg.Execute(shell="sh", command="sudo apt-get update && sudo apt-get install -y nfs-kernel-server"))
+observer = request.RawPC('observer')
+observer.hardware_type = 'c220g5'
+observer.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
+observer.Site('Site 1')
 
-# Link the nodes together
+# Define a link between the two nodes
 link = request.Link(members=[webserver, observer])
-link.bandwidth = 1000000  # 1 Gbps
 
 # Print the RSpec to the enclosing page.
 portal.context.printRequestRSpec()
